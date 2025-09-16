@@ -1,0 +1,36 @@
+{
+  "name": "did-educational-toolkit",
+  "version": "1.0.0",
+  "description": "Educational toolkit for DID Issuer-Holder-Verifier demo",
+  "main": "index.js",
+  "scripts": {
+    "issuer": "node issuer/server.js",
+    "holder": "node holder/server.js",
+    "verifier": "node verifier/server.js",
+    "dev": "concurrently \"npm run issuer\" \"npm run holder\" \"npm run verifier\""
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FaqiangMei/DID-Educational-Toolkit.git"
+  },
+  "keywords": [
+    "DID",
+    "VerifiableCredentials",
+    "Toolkit"
+  ],
+  "author": "Faqiang Mei",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/FaqiangMei/DID-Educational-Toolkit/issues"
+  },
+  "homepage": "https://github.com/FaqiangMei/DID-Educational-Toolkit#readme",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
