@@ -9,7 +9,6 @@
     "verifier": "node verifier/server.js",
     "dev": "concurrently \"npm run issuer\" \"npm run holder\" \"npm run verifier\""
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FaqiangMei/DID-Educational-Toolkit.git"
@@ -27,6 +26,7 @@
   },
   "homepage": "https://github.com/FaqiangMei/DID-Educational-Toolkit#readme",
   "dependencies": {
+    "@veramo/did-comm": "^6.0.0",
     "axios": "^1.7.2",
     "express": "^4.19.2"
   },

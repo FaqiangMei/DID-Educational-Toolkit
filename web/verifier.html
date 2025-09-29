@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifier - Verify VP</title>
+  <style>body{font-family:sans-serif;max-width:400px;margin:2em auto;}input,button,textarea{margin:0.5em 0;}</style>
+</head>
+<body>
+  <h2>Verifier - Verify VP</h2>
+  <button id="oobBtn">Generate OOB Invitation</button>
+  <pre id="oob"></pre>
+  <button id="refreshDidcommBtn">Refresh DIDComm Messages</button>
+  <pre id="didcommMsgs"></pre>
+  <form id="verify-form">
+    <label>Paste VP JSON:<br><textarea id="vp" rows="5" cols="40" required></textarea></label><br>
+    <button type="submit">Verify VP</button>
+  </form>
+  <pre id="result"></pre>
+  <script>
+    document.getElementById('refreshDidcommBtn').onclick = async function() {
+      const res = await fetch('http://localhost:5002/didcomm-messages');
+      const data = await res.json();
+      document.getElementById('didcommMsgs').textContent = JSON.stringify(data, null, 2);
+    };
+    document.getElementById('oobBtn').onclick = async function() {
+      const res = await fetch('http://localhost:5002/oob-invitation');
+      const data = await res.json();
+      document.getElementById('oob').textContent = JSON.stringify(data, null, 2);
+    };
+    document.getElementById('verify-form').onsubmit = async function(e) {
+      e.preventDefault();
+      let vp;
+      try { vp = JSON.parse(document.getElementById('vp').value); } catch { alert('Invalid JSON'); return; }
+      const res = await fetch('http://localhost:5002/verify-vp', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ vp })
+      });
+      const data = await res.json();
+      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+    };
+  </script>
+</body>
+</html>

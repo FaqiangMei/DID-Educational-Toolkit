@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DMV Issuer - Digital ID</title>
+  <style>body{font-family:sans-serif;max-width:400px;margin:2em auto;}input,button{margin:0.5em 0;}</style>
+</head>
+<body>
+  <h2>DMV Issuer - Issue Digital ID</h2>
+  <form id="issue-form">
+    <label>Subject DID:<br><input type="text" id="subjectDid" value="did:example:holder1" required></label><br>
+    <label>Name:<br><input type="text" id="name" value="Alice" required></label><br>
+    <label>Age:<br><input type="number" id="age" value="20" required></label><br>
+    <button type="submit">Issue VC</button>
+  </form>
+  <pre id="result"></pre>
+  <script>
+    document.getElementById('issue-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const subjectDid = document.getElementById('subjectDid').value;
+      const name = document.getElementById('name').value;
+      const age = parseInt(document.getElementById('age').value, 10);
+      const res = await fetch('http://localhost:5100/issue-vc', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ subjectDid, claim: { name, age } })
+      });
+      const data = await res.json();
+      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Holder - Store/Present VC</title>
+  <style>body{font-family:sans-serif;max-width:400px;margin:2em auto;}input,button,textarea{margin:0.5em 0;}</style>
+</head>
+<body>
+  <h2>User Holder - Store/Present VC</h2>
+  <label>Paste OOB Invitation:<br><textarea id="oob" rows="5" cols="40"></textarea></label><br>
+  <button id="acceptOobBtn">Accept OOB Invitation</button>
+  <pre id="oobResult"></pre>
+  <form id="store-form">
+    <label>Paste VC JSON:<br><textarea id="vc" rows="5" cols="40" required></textarea></label><br>
+    <button type="submit">Store VC</button>
+  </form>
+  <button id="presentBtn">Present VP</button>
+  <button id="sendDidcommBtn">Send VP via DIDComm</button>
+  <pre id="result"></pre>
+  <script>
+    document.getElementById('acceptOobBtn').onclick = function() {
+      let oob;
+      try { oob = JSON.parse(document.getElementById('oob').value); } catch { alert('Invalid OOB JSON'); return; }
+      document.getElementById('oobResult').textContent = 'Accepted OOB Invitation:\n' + JSON.stringify(oob, null, 2);
+    };
+    document.getElementById('store-form').onsubmit = async function(e) {
+      e.preventDefault();
+      let vc;
+      try { vc = JSON.parse(document.getElementById('vc').value); } catch { alert('Invalid JSON'); return; }
+      const res = await fetch('http://localhost:5001/store-vc', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ vc })
+      });
+      const data = await res.json();
+      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+    };
+    let lastVP = null;
+    document.getElementById('presentBtn').onclick = async function() {
+      const res = await fetch('http://localhost:5001/present-vp');
+      const data = await res.json();
+      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+      lastVP = data.vp;
+    };
+    document.getElementById('sendDidcommBtn').onclick = async function() {
+      if (!lastVP) {
+        alert('Please click Present VP first.');
+        return;
+      }
+      // For demo, use fixed DIDs
+      const from = 'did:example:holder1';
+      const to = 'did:example:verifier1';
+      const res = await fetch('http://localhost:5002/didcomm-inbox', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ from, to, body: lastVP })
+      });
+      const data = await res.json();
+      document.getElementById('result').textContent = 'DIDComm sent!\n' + JSON.stringify(data, null, 2);
+    };
+  </script>
+</body>
+</html>
